@@ -1,0 +1,11 @@
+<resources>
+    <declare-styleable name="CustomColumnView">
+        <attr name="columnLeftText" format="string" />
+        <attr name="columnRightText" format="string" />
+        <attr name="columnLeftTextSize" format="integer"/>
+        <attr name="columnRightTextSize" format="integer"/>
+        <attr name="columnLeftTextColor" format="color"/>
+        <attr name="columnRightTextColor" format="color"/>
+        <attr name="columnRightIcon" format="reference" />
+    </declare-styleable>
+</resources>
