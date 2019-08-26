@@ -1,4 +1,4 @@
-package com.app.base.image;
+package com.app.base.manage;
 
 import android.content.Context;
 import android.graphics.Bitmap;
