@@ -81,6 +81,7 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initArguments();
         initView(savedInstanceState);
         initData(savedInstanceState);
         setListener();
@@ -132,6 +133,13 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     @LayoutRes
     protected int getTitleLayoutId() {
         return 0;
+    }
+
+    /**
+     * 获取数据
+     */
+    protected void initArguments() {
+
     }
 
     /**

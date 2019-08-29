@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -16,12 +19,14 @@ import androidx.annotation.NonNull;
 import com.app.base.R;
 
 /**
- *
+ * 自定义控件
  */
 public class CustomColumnView extends LinearLayout {
 
     private String mColumnLeftText;
     private String mColumnRightText;
+    private String mColumnLeftTextTypefaceName;
+    private String mColumnRightTextTypefaceName;
     private int mColumnLeftTextSize = 14;
     private int mColumnRightTextSize = 14;
     private int mColumnLeftTextColor = Color.BLACK;
@@ -65,6 +70,10 @@ public class CustomColumnView extends LinearLayout {
         mColumnRightIconId = typedArray.getResourceId(R.styleable.CustomColumnView_columnRightIcon, mColumnRightIconId);
         mColumnLeftIconShow = typedArray.getBoolean(R.styleable.CustomColumnView_columnLeftIconShow, mColumnLeftIconShow);
         mColumnRightIconShow = typedArray.getBoolean(R.styleable.CustomColumnView_columnRightIconShow, mColumnRightIconShow);
+
+        mColumnLeftTextTypefaceName = typedArray.getString(R.styleable.CustomColumnView_columnLeftTextTypeface);
+        mColumnRightTextTypefaceName = typedArray.getString(R.styleable.CustomColumnView_columnRightTextTypeface);
+
         typedArray.recycle();
 
         inflate(context, R.layout.layout_custom_column_view, this);
@@ -82,6 +91,27 @@ public class CustomColumnView extends LinearLayout {
         setRightTextColor(mColumnRightTextColor);
         setRightIcon(mColumnRightIconId);
         showRightIcon(mColumnRightIconShow);
+
+        setTypeface();
+    }
+
+    private void setTypeface() {
+        try {
+            if (mColumnLeftTextTypefaceName != null) {
+                Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/" + mColumnLeftTextTypefaceName);
+                if (typeface != null) {
+                    leftTextView.setTypeface(typeface);
+                }
+            }
+            if (mColumnRightTextTypefaceName != null) {
+                Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/" + mColumnRightTextTypefaceName);
+                if (typeface != null) {
+                    rightTextView.setTypeface(typeface);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

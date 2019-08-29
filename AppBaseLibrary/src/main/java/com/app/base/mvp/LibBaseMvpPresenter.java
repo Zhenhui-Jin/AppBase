@@ -8,7 +8,7 @@ import java.lang.ref.WeakReference;
  * @param <VM> ViewModel
  * @param <V>  IView
  */
-public class LibBaseMvpPresenter<VM, V extends LibBaseMvpView<VM>> {
+public abstract class LibBaseMvpPresenter<VM, V extends LibBaseMvpView<VM>> {
 
     private WeakReference<V> viewRef;
 
@@ -26,6 +26,8 @@ public class LibBaseMvpPresenter<VM, V extends LibBaseMvpView<VM>> {
     private void attachView(V view) {
         viewRef = new WeakReference<>(view);
     }
+
+    public abstract void requestData();
 
     /**
      * 结束的时候清除，防止内存溢出
