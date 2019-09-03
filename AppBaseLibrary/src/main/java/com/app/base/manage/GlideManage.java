@@ -1,4 +1,4 @@
-package com.app.base.image;
+package com.app.base.manage;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,6 +27,7 @@ public class GlideManage {
     private static RequestBuilder<Bitmap> getBitmap(Context context, @DrawableRes int placeholderId, String url) {
         return Glide.with(context)
                 .asBitmap()
+                .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .dontAnimate()
                 .load(url)

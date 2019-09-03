@@ -4,6 +4,7 @@ package com.app.base.fragment;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.app.base.R;
+import com.app.base.bus.RxBus;
+import com.app.base.bus.event.LanguageChangeEvent;
 import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import me.yokeyword.fragmentation_swipeback.SwipeBackFragment;
 
@@ -31,11 +35,23 @@ import static com.app.base.view.TopBarType.TitleBar;
  */
 public abstract class LibBaseFragment extends SwipeBackFragment {
 
+    protected final String TAG = getClass().getSimpleName();
+    /**
+     * 权限请求
+     */
+    private RxPermissions rxPermissions;
+
     protected Handler mHandler = new Handler();
 
     protected LayoutInflater mLayoutInflater;
     private View mContentView;
     protected View mToolbarView;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        rxPermissions = new RxPermissions(this);
+    }
 
     @Nullable
     @Override
@@ -66,9 +82,12 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initArguments();
         initView(savedInstanceState);
         initData(savedInstanceState);
         setListener();
+
+        RxBus.get().register(LanguageChangeEvent.class, event -> onLanguageChange());
     }
 
     @SuppressLint("RestrictedApi")
@@ -117,6 +136,13 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     @LayoutRes
     protected int getTitleLayoutId() {
         return 0;
+    }
+
+    /**
+     * 获取数据
+     */
+    protected void initArguments() {
+
     }
 
     /**
@@ -214,7 +240,57 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
         }
     }
 
+    /**
+     * 发送事件
+     *
+     * @param event
+     */
     protected void sendEvent(Object event) {
+        RxBus.get().post(event);
+    }
+
+
+    /**
+     * 请求权限
+     * 重写 requestPermissionsResult()
+     *
+     * @param permissions
+     */
+    @SuppressLint("CheckResult")
+    protected void requestPermissions(String... permissions) {
+        rxPermissions.requestEach(permissions).subscribe(permission -> {
+            Log.i(TAG, "requestPermissions: " + permission);
+            if (permission.granted) {
+                //权限请求成功
+            } else if (permission.shouldShowRequestPermissionRationale) {
+                //拒绝权限，可再次询问
+            } else {
+                //拒绝权限，不再询问
+            }
+            requestPermissionsResult(permission.name, permission.granted, permission.shouldShowRequestPermissionRationale);
+        });
+    }
+
+    /**
+     * 请求权限结果回调，请求权限时需重写逻辑
+     *
+     * @param permission    权限
+     * @param isGranted     是否同意
+     * @param isShowRequest 是否可再次询问  false：选择了不再询问
+     */
+    protected void requestPermissionsResult(String permission, boolean isGranted, boolean isShowRequest) {
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    /**
+     * 语言切换回调
+     */
+    protected void onLanguageChange() {
 
     }
+
 }

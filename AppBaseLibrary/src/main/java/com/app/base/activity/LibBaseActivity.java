@@ -1,6 +1,7 @@
 package com.app.base.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,9 +11,14 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
 
 import com.app.base.R;
+import com.app.base.bus.RxBus;
+import com.app.base.bus.event.LanguageChangeEvent;
 import com.app.base.fragment.FragmentOnTouchListener;
+import com.app.base.manage.PermissionsManage;
+import com.app.base.utils.LanguageUtils;
 import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
+import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import me.yokeyword.fragmentation_swipeback.SwipeBackActivity;
 
@@ -25,6 +31,12 @@ import static com.app.base.view.TopBarType.TitleBar;
  * @Time 2019/8/15 12:04
  */
 public abstract class LibBaseActivity extends SwipeBackActivity {
+    protected final String TAG = getClass().getSimpleName();
+
+    /**
+     * 权限请求
+     */
+    private RxPermissions rxPermissions;
 
     protected View mToolbarView;
 
@@ -33,10 +45,10 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
      */
     private FragmentOnTouchListener onTouchListener;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        rxPermissions = PermissionsManage.getRxPermissions(this);
         initContentView();
 //        ButterKnife.bind(this);
         setSwipeBackEnable(false);
@@ -49,6 +61,12 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
         initData(savedInstanceState);
         setListener();
 
+        RxBus.get().register(LanguageChangeEvent.class, event -> onLanguageChange());
+    }
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(LanguageUtils.getAttachBaseContext(context));
     }
 
     @SuppressLint("RestrictedApi")
@@ -163,9 +181,8 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
     }
 
     protected void sendEvent(Object event) {
-
+        RxBus.get().post(event);
     }
-
 
     /**
      * 分发触摸事件给所有注册了FragmentOnTouchListener的接口
@@ -194,4 +211,47 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
     public void unregisterMyOnTouchListener() {
         onTouchListener = null;
     }
+
+    /**
+     * 请求权限
+     * 重写 requestPermissionsResult()
+     *
+     * @param permissions
+     */
+    @SuppressLint("CheckResult")
+    protected void requestPermissions(String... permissions) {
+        rxPermissions.requestEach(permissions).subscribe(permission -> {
+            if (permission.granted) {
+                //权限请求成功
+            } else if (permission.shouldShowRequestPermissionRationale) {
+                //拒绝权限，可再次询问
+            } else {
+                //拒绝权限，不再询问
+            }
+            requestPermissionsResult(permission.name, permission.granted, permission.shouldShowRequestPermissionRationale);
+        });
+    }
+
+    /**
+     * 请求权限结果回调，请求权限时需重写逻辑
+     *
+     * @param permission    权限
+     * @param isGranted     是否同意
+     * @param isShowRequest 是否可再次询问  false：选择了不再询问
+     */
+    protected void requestPermissionsResult(String permission, boolean isGranted, boolean isShowRequest) {
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+
+    /**
+     * 语言切换回调
+     */
+    protected void onLanguageChange() {
+    }
+
 }

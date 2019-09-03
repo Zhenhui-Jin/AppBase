@@ -37,10 +37,10 @@
 #---start 混淆immersionbar------------------------------------
 
 
--keep public class com.google.android.material.bottomnavigation.BottomNavigationView { *; }
--keep public class com.google.android.material.bottomnavigation.BottomNavigationMenuView { *; }
--keep public class com.google.android.material.bottomnavigation.BottomNavigationPresenter { *; }
--keep public class com.google.android.material.bottomnavigation.BottomNavigationItemView { *; }
+-keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationView { *; }
+-keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationMenuView { *; }
+-keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationPresenter { *; }
+-keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationItemView { *; }
 
 
 #---start 混淆glide------------------------------------
