@@ -1,6 +1,7 @@
 package com.app.base.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,8 +12,10 @@ import androidx.annotation.LayoutRes;
 
 import com.app.base.R;
 import com.app.base.bus.RxBus;
+import com.app.base.bus.event.LanguageChangeEvent;
 import com.app.base.fragment.FragmentOnTouchListener;
 import com.app.base.manage.PermissionsManage;
+import com.app.base.utils.LanguageUtils;
 import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -28,6 +31,7 @@ import static com.app.base.view.TopBarType.TitleBar;
  * @Time 2019/8/15 12:04
  */
 public abstract class LibBaseActivity extends SwipeBackActivity {
+    protected final String TAG = getClass().getSimpleName();
 
     /**
      * 权限请求
@@ -57,6 +61,12 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
         initData(savedInstanceState);
         setListener();
 
+        RxBus.get().register(LanguageChangeEvent.class, event -> onLanguageChange());
+    }
+
+    @Override
+    protected void attachBaseContext(Context context) {
+        super.attachBaseContext(LanguageUtils.getAttachBaseContext(context));
     }
 
     @SuppressLint("RestrictedApi")
@@ -236,4 +246,12 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+
+    /**
+     * 语言切换回调
+     */
+    protected void onLanguageChange() {
+    }
+
 }

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.app.base.R;
 import com.app.base.bus.RxBus;
+import com.app.base.bus.event.LanguageChangeEvent;
 import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -34,7 +35,7 @@ import static com.app.base.view.TopBarType.TitleBar;
  */
 public abstract class LibBaseFragment extends SwipeBackFragment {
 
-    private static final String TAG = LibBaseFragment.class.getSimpleName();
+    protected final String TAG = getClass().getSimpleName();
     /**
      * 权限请求
      */
@@ -85,6 +86,8 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
         initView(savedInstanceState);
         initData(savedInstanceState);
         setListener();
+
+        RxBus.get().register(LanguageChangeEvent.class, event -> onLanguageChange());
     }
 
     @SuppressLint("RestrictedApi")
@@ -282,4 +285,12 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     public void onDestroyView() {
         super.onDestroyView();
     }
+
+    /**
+     * 语言切换回调
+     */
+    protected void onLanguageChange() {
+
+    }
+
 }
