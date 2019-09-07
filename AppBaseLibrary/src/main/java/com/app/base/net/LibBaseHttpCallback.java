@@ -1,11 +1,18 @@
 package com.app.base.net;
 
+import androidx.annotation.NonNull;
+
+import com.google.gson.reflect.TypeToken;
+
 /**
  * @Description
  * @Author Zhenhui
  * @Time 2019/8/15 10:32
  */
 public interface LibBaseHttpCallback<T> {
+
+    @NonNull
+    TypeToken<T> getTypeToken();
 
     /**
      * 判断成功的规则
@@ -37,10 +44,12 @@ public interface LibBaseHttpCallback<T> {
     void onFailed(T result);
 
     /**
-     * 请求错误
+     * api返回失败数据
      *
-     * @param e
+     * @param code
+     * @param message
+     * @return
      */
-    void onError(Throwable e);
+    void onFailed(int code, String message);
 
 }

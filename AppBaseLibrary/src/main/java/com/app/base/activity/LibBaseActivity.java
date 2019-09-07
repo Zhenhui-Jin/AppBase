@@ -66,7 +66,9 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
 
     @Override
     protected void attachBaseContext(Context context) {
-        super.attachBaseContext(LanguageUtils.getAttachBaseContext(context));
+        //获取对应的语言上下文
+        Context attachBaseContext = LanguageUtils.getAttachBaseContext(context);
+        super.attachBaseContext(attachBaseContext);
     }
 
     @SuppressLint("RestrictedApi")
@@ -147,6 +149,15 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
             bar.statusBarDarkFont(true, 0.2f);
         }
         bar.init();
+    }
+
+    /**
+     * 获取状态栏高度
+     *
+     * @return
+     */
+    protected int getStatusBarHeight() {
+        return ImmersionBar.getStatusBarHeight(this);
     }
 
     /**

@@ -5,9 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -179,5 +177,20 @@ public class CustomColumnView extends LinearLayout {
 
     public void showRightIcon(boolean isShow) {
         rightIconImageView.setVisibility(isShow ? VISIBLE : GONE);
+    }
+
+    //data binding setter
+    public void setColumnLeftText(CharSequence text){
+        leftTextView.setText(text);
+    }
+
+    //data binding setter
+    public void setColumnRightText(CharSequence text){
+        rightTextView.setText(text);
+    }
+
+    //data binding setter
+    public void setColumnRightIconShow(boolean show){
+        rightIconImageView.setVisibility(show ? VISIBLE : GONE);
     }
 }

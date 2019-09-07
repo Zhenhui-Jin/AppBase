@@ -8,8 +8,8 @@ public interface LibBaseMvpView<VM> extends LibIView {
     /**
      * 数据返回
      *
-     * @param model
+     * @param data
      */
-    void updateData(VM model);
+    void updateData(VM data);
 
 }

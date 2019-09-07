@@ -16,10 +16,32 @@ public class RequestInfo {
     private Map<String, String> headers = new HashMap();  //添加的header
     private Map<String, String> params = new HashMap<>();     //添加的param
 
-    public RequestInfo(Object tag, RequestMethod method, String url) {
+    private RequestInfo(Object tag, RequestMethod method, String url) {
         this.tag = tag;
         this.method = method;
         this.url = url;
+    }
+
+    /**
+     * HTTP GET 请求
+     *
+     * @param tag
+     * @param url
+     * @return
+     */
+    public static RequestInfo get(Object tag, String url) {
+        return new RequestInfo(tag, RequestMethod.GET, url);
+    }
+
+    /**
+     * HTTP POST 请求
+     *
+     * @param tag
+     * @param url
+     * @return
+     */
+    public static RequestInfo post(Object tag, String url) {
+        return new RequestInfo(tag, RequestMethod.POST, url);
     }
 
     public Object getTag() {

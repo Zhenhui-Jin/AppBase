@@ -70,9 +70,9 @@ public abstract class LibBaseMvpPresenter<VM, V extends LibBaseMvpView<VM>> {
         }
     }
 
-    final protected void updateData(VM model) {
+    final protected void updateData(VM data) {
         if (isAdded()) {
-            getView().updateData(model);
+            getView().updateData(data);
         }
     }
 

@@ -50,4 +50,7 @@ public class GlideManage {
         getBitmap(context, placeholderId, url).into(target);
     }
 
+    public static void loadCircleBitmap(ImageView imageView, int placeHolder, String url) {
+        getBitmap(imageView.getContext(),placeHolder,url).circleCrop().into(imageView);
+    }
 }

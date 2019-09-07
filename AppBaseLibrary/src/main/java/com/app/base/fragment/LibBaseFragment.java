@@ -192,6 +192,15 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     }
 
     /**
+     * 获取状态栏高度
+     *
+     * @return
+     */
+    protected int getStatusBarHeight() {
+        return ImmersionBar.getStatusBarHeight(this);
+    }
+
+    /**
      * 是否使用沉浸式状态栏
      *
      * @return

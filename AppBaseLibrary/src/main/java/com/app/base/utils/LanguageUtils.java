@@ -16,6 +16,18 @@ public class LanguageUtils {
 
     public static final String LANG_TYPE_KEY = "LangType";
 
+    public enum LangType {
+        FOLLOW_SYSTEM, //跟随系统
+        SIMPLE_CHINESE, //简体
+        TRADITION_CHINESE, //繁体
+        ENGLISH //英文
+    }
+
+    /**
+     * 获取语言类型
+     *
+     * @return
+     */
     public static LangType getCurrentLangType() {
         LangType langType = null;
         try {
@@ -29,16 +41,30 @@ public class LanguageUtils {
         return langType;
     }
 
-    public enum LangType {
-        FOLLOW_SYSTEM, SIMPLE_CHINESE, TRADITION_CHINESE, ENGLISH
+    /**
+     * 获取语言名称
+     *
+     * @return
+     */
+    public static String getCurrentLocaleName() {
+        Locale locale = getLocale(getCurrentLangType());
+        String language = locale.getLanguage();
+        return language;
     }
 
+    /**
+     * 设置语言类型
+     *
+     * @param langType
+     */
     public static void setCurrentLangType(LangType langType) {
+        //存储语言类型
         DataCache.put(LANG_TYPE_KEY, langType);
+        //发送广播
         RxBus.get().post(new LanguageChangeEvent());
     }
 
-    private static Locale getCurrentLang(LangType type) {
+    public static Locale getLocale(LangType type) {
         switch (type) {
             case FOLLOW_SYSTEM:
                 return Locale.getDefault();
@@ -53,13 +79,19 @@ public class LanguageUtils {
         }
     }
 
+    /**
+     * 返回修改语言后的上下文
+     *
+     * @param context
+     * @return
+     */
     public static Context getAttachBaseContext(Context context) {
         return getAttachBaseContext(context, getCurrentLangType());
     }
 
     private static Context getAttachBaseContext(Context context, LangType langType) {
         //Android 7.0之后需要用另一种方式更改res语言,即配置进context中
-        Log.d("pigdreams", "配置语言...默认locale=" + Locale.getDefault() + ";用户设置的为=" + getCurrentLang(langType));
+        Log.d("LanguageUtils", "配置语言...默认locale=" + Locale.getDefault() + ";用户设置的为=" + getLocale(langType));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             context = updateResources(context, langType);
         } else {
@@ -72,7 +104,7 @@ public class LanguageUtils {
     @TargetApi(Build.VERSION_CODES.N)
     private static Context updateResources(Context context, LangType type) {
         Resources resources = context.getResources();
-        Locale locale = getCurrentLang(type);
+        Locale locale = getLocale(type);
         Configuration configuration = resources.getConfiguration();
         configuration.setLocale(locale);
         return context.createConfigurationContext(configuration);
@@ -81,7 +113,7 @@ public class LanguageUtils {
     private static void changeResLanguage(Context context, LangType type) {
         Resources resources = context.getResources();
         Configuration configuration = resources.getConfiguration();
-        Locale locale = getCurrentLang(type);
+        Locale locale = getLocale(type);
         configuration.setLocale(locale);
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());
     }

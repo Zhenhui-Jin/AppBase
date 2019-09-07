@@ -146,6 +146,7 @@ public abstract class LibBaseOkGo {
      *
      * @return
      */
+    @NonNull
     protected Map<String, String> getDefaultParams() {
         return new HashMap<>();
     }
@@ -155,6 +156,7 @@ public abstract class LibBaseOkGo {
      *
      * @return
      */
+    @NonNull
     protected Map<String, String> getDefaultHeaders() {
         return new HashMap<>();
     }
@@ -196,18 +198,26 @@ public abstract class LibBaseOkGo {
     }
 
     private <T> void get(RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
+        HttpHeaders headers = getHttpHeaders();
+        headers.put(mapToHeaders(requestInfo.getHeaders()));
+        HttpParams params = getHttpParams();
+        params.put(requestInfo.getParams(), true);
         GetRequest<T> getRequest = OkGo.<T>get(requestInfo.getUrl())
                 .tag(requestInfo.getTag())
-                .headers(mapToHeaders(requestInfo.getHeaders()))
-                .params(mapToParams(requestInfo.getParams()));
+                .headers(headers)
+                .params(params);
         getRequest.execute(new LibCallback<>(callback));
     }
 
     private <T> void post(RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
+        HttpHeaders headers = getHttpHeaders();
+        headers.put(mapToHeaders(requestInfo.getHeaders()));
+        HttpParams params = getHttpParams();
+        params.put(requestInfo.getParams(), true);
         PostRequest<T> postRequest = OkGo.<T>post(requestInfo.getUrl())
                 .tag(requestInfo.getTag())
-                .headers(mapToHeaders(requestInfo.getHeaders()))
-                .params(mapToParams(requestInfo.getParams()));
+                .headers(headers)
+                .params(params);
         postRequest.execute(new LibCallback<>(callback));
     }
 

@@ -1,5 +1,5 @@
 package com.app.base.net;
 
-public enum RequestMethod {
+enum RequestMethod {
     POST, GET
 }
