@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.IdRes;
@@ -179,16 +180,33 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     protected void initImmersionBar() {
         ImmersionBar bar = ImmersionBar.with(this);
         if (isHaveToolbar()) {
-            bar.fitsSystemWindows(true)
+
+            View baseToolbarHeightView = findViewById(R.id.base_toolbar_height_view);
+            bar.statusBarView(baseToolbarHeightView)
                     .statusBarColor(statusBarColor());
+            ViewGroup.LayoutParams layoutParams = baseToolbarHeightView.getLayoutParams();
+            layoutParams.width = getStatusBarHeight();
+
             if (mToolbarView != null) {
                 bar.titleBar(mToolbarView);
             }
+
+            setToolbarSuspending();
+
         }
         if (isStatusBarDarkFont()) {
             bar.statusBarDarkFont(true, 0.2f);
         }
         bar.init();
+    }
+
+    /**
+     * 设置悬浮标题栏
+     */
+    private void setToolbarSuspending() {
+        View baseContentLayout = findViewById(R.id.base_content_layout);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) baseContentLayout.getLayoutParams();
+        params.addRule(RelativeLayout.BELOW, isSuspendingToolbar() ? 0 : R.id.base_toolbar_layout);
     }
 
     /**
@@ -229,6 +247,13 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     @ColorRes
     protected int statusBarColor() {
         return android.R.color.transparent;
+    }
+
+    /**
+     * 是否悬浮标题栏
+     */
+    protected boolean isSuspendingToolbar() {
+        return false;
     }
 
     @Override

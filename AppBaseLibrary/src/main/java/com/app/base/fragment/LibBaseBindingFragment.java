@@ -31,7 +31,7 @@ public abstract class LibBaseBindingFragment<DB extends ViewDataBinding> extends
             toolbarVs.setLayoutResource(getTitleLayoutId());
             mToolbarView = toolbarVs.inflate();
         }
-        ViewGroup contentLayout = view.findViewById(R.id.content_layout);
+        ViewGroup contentLayout = view.findViewById(R.id.base_content_layout);
         mDataBinding = DataBindingUtil.inflate(mLayoutInflater, contentLayoutId, contentLayout, true);
         return view;
     }
