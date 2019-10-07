@@ -15,6 +15,7 @@ public class RequestInfo {
     private RequestMethod method;
     private Map<String, String> headers = new HashMap();  //添加的header
     private Map<String, String> params = new HashMap<>();     //添加的param
+    private String bodyJson;
 
     private RequestInfo(Object tag, RequestMethod method, String url) {
         this.tag = tag;
@@ -42,6 +43,17 @@ public class RequestInfo {
      */
     public static RequestInfo post(Object tag, String url) {
         return new RequestInfo(tag, RequestMethod.POST, url);
+    }
+
+    /**
+     * HTTP PUT 请求
+     *
+     * @param tag
+     * @param url
+     * @return
+     */
+    public static RequestInfo put(Object tag, String url) {
+        return new RequestInfo(tag, RequestMethod.PUT, url);
     }
 
     public Object getTag() {
@@ -82,5 +94,14 @@ public class RequestInfo {
     public RequestInfo addHeaders(String key, String value) {
         headers.put(key, value);
         return this;
+    }
+
+    public RequestInfo setBodyJson(String bodyJson) {
+        this.bodyJson = bodyJson;
+        return this;
+    }
+
+    public String getBodyJson() {
+        return bodyJson;
     }
 }

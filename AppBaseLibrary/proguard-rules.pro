@@ -34,7 +34,7 @@
 #---start 混淆immersionbar------------------------------------
  -keep class com.gyf.immersionbar.* {*;}
  -dontwarn com.gyf.immersionbar.**
-#---start 混淆immersionbar------------------------------------
+#---end 混淆immersionbar------------------------------------
 
 
 -keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationView { *; }
@@ -50,4 +50,11 @@
   **[] $VALUES;
   public *;
 }
-#---start 混淆glide------------------------------------
+#---end 混淆glide------------------------------------
+
+
+#---start 混淆banner------------------------------------
+-keep class com.youth.banner.** {
+    *;
+ }
+#---end 混淆banner------------------------------------

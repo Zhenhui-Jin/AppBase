@@ -12,9 +12,18 @@
         android:layout_height="fill_parent" />
 
     <TextView
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        android:gravity="center"
+        android:background="@drawable/shape_bg_staus"
+        android:minHeight="70dp"
+        android:minWidth="200dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:text="@string/tip_scan_qr_code"
         android:id="@+id/status_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal" />
+        android:layout_gravity="center_horizontal" />
 
 </merge>

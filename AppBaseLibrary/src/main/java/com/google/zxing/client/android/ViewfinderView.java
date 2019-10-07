@@ -30,6 +30,8 @@ public final class ViewfinderView extends View {
     private static final int CURRENT_POINT_OPACITY = 0xA0;
     private static final int MAX_RESULT_POINTS = 20;
     private static final int POINT_SIZE = 6;
+    private static final int LONG = 60;
+    private static final int SHORT = 6;
 
     private CameraManager cameraManager;
     private final Paint paint;
@@ -38,9 +40,12 @@ public final class ViewfinderView extends View {
     private final int resultColor;
     private final int laserColor;
     private final int resultPointColor;
+    private final int rectangleColor;
+    private final int tipBgColor;
     private int scannerAlpha;
     private List<ResultPoint> possibleResultPoints;
     private List<ResultPoint> lastPossibleResultPoints;
+    private Rect imgRect = new Rect();
 
     // This constructor is used when the class is built from an XML resource.
     public ViewfinderView(Context context, AttributeSet attrs) {
@@ -49,10 +54,12 @@ public final class ViewfinderView extends View {
         // Initialize these once for performance rather than calling them every time in onDraw().
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         Resources resources = getResources();
-        maskColor = resources.getColor(R.color.viewfinder_mask);
+        maskColor = resources.getColor(android.R.color.transparent);
         resultColor = resources.getColor(R.color.result_view);
         laserColor = resources.getColor(R.color.viewfinder_laser);
         resultPointColor = resources.getColor(R.color.possible_result_points);
+        rectangleColor = resources.getColor(android.R.color.white);
+        tipBgColor = resources.getColor(android.R.color.darker_gray);
         scannerAlpha = 0;
         possibleResultPoints = new ArrayList<>(5);
         lastPossibleResultPoints = null;
@@ -77,11 +84,11 @@ public final class ViewfinderView extends View {
         int height = canvas.getHeight();
 
         // Draw the exterior (i.e. outside the framing rect) darkened
-        paint.setColor(resultBitmap != null ? resultColor : maskColor);
-        canvas.drawRect(0, 0, width, frame.top, paint);
-        canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
-        canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
-        canvas.drawRect(0, frame.bottom + 1, width, height, paint);
+//        paint.setColor(resultBitmap != null ? resultColor : maskColor);
+//        canvas.drawRect(0, 0, width, frame.top, paint);
+//        canvas.drawRect(0, frame.top, frame.left, frame.bottom + 1, paint);
+//        canvas.drawRect(frame.right + 1, frame.top, width, frame.bottom + 1, paint);
+//        canvas.drawRect(0, frame.bottom + 1, width, height, paint);
 
         if (resultBitmap != null) {
             // Draw the opaque result bitmap over the scanning rectangle
@@ -90,11 +97,36 @@ public final class ViewfinderView extends View {
         } else {
 
             // Draw a red "laser scanner" line through the middle to show decoding is active
-            paint.setColor(laserColor);
-            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
-            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
-            int middle = frame.height() / 2 + frame.top;
-            canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
+//            paint.setColor(laserColor);
+//            paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
+//            scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
+//            int middle = frame.height() / 2 + frame.top;
+//            canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
+
+            // TODO: 2019/9/25 draw text
+
+
+            paint.setColor(rectangleColor);
+            //left top
+            canvas.drawRect(frame.left,frame.top,frame.left + LONG,frame.top + SHORT,paint);
+            canvas.drawRect(frame.left,frame.top,frame.left + SHORT,frame.top + LONG,paint);
+
+            //right top
+            canvas.drawRect(frame.right - LONG,frame.top,frame.right ,frame.top + SHORT,paint);
+            canvas.drawRect(frame.right - SHORT,frame.top,frame.right ,frame.top + LONG,paint);
+
+            //left bottom
+            canvas.drawRect(frame.left,frame.bottom - SHORT,frame.left + LONG,frame.bottom,paint);
+            canvas.drawRect(frame.left,frame.bottom - LONG,frame.left + SHORT,frame.bottom,paint);
+
+
+            //right bottom
+            canvas.drawRect(frame.right - LONG,frame.bottom - SHORT,frame.right,frame.bottom,paint);
+            canvas.drawRect(frame.right - SHORT,frame.bottom - LONG,frame.right,frame.bottom,paint);
+
+
+            imgRect.set(frame.left, frame.top + LONG, frame.right, frame.bottom - LONG);
+
 
             float scaleX = frame.width() / (float) previewFrame.width();
             float scaleY = frame.height() / (float) previewFrame.height();
@@ -161,15 +193,18 @@ public final class ViewfinderView extends View {
     }
 
     public void addPossibleResultPoint(ResultPoint point) {
-        List<ResultPoint> points = possibleResultPoints;
-        synchronized (points) {
-            points.add(point);
-            int size = points.size();
-            if (size > MAX_RESULT_POINTS) {
-                // trim it
-                points.subList(0, size - MAX_RESULT_POINTS / 2).clear();
-            }
-        }
+//        List<ResultPoint> points = possibleResultPoints;
+//        synchronized (points) {
+//            points.add(point);
+//            int size = points.size();
+//            if (size > MAX_RESULT_POINTS) {
+//                // trim it
+//                points.subList(0, size - MAX_RESULT_POINTS / 2).clear();
+//            }
+//        }
     }
 
+    public Rect getImgRect() {
+        return imgRect;
+    }
 }

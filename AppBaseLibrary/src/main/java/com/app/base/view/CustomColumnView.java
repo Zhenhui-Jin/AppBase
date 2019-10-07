@@ -2,10 +2,11 @@ package com.app.base.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,8 +26,8 @@ public class CustomColumnView extends LinearLayout {
     private String mColumnRightText;
     private String mColumnLeftTextTypefaceName;
     private String mColumnRightTextTypefaceName;
-    private int mColumnLeftTextSize = 14;
-    private int mColumnRightTextSize = 14;
+    private float mColumnLeftTextSize = 0;
+    private float mColumnRightTextSize = 0;
     private int mColumnLeftTextColor = Color.BLACK;
     private int mColumnRightTextColor = Color.GRAY;
     private int mColumnLeftIconId;
@@ -60,8 +61,8 @@ public class CustomColumnView extends LinearLayout {
                 attrs, R.styleable.CustomColumnView, defStyle, 0);
         mColumnLeftText = typedArray.getString(R.styleable.CustomColumnView_columnLeftText);
         mColumnRightText = typedArray.getString(R.styleable.CustomColumnView_columnRightText);
-        mColumnLeftTextSize = typedArray.getInteger(R.styleable.CustomColumnView_columnLeftTextSize, mColumnLeftTextSize);
-        mColumnRightTextSize = typedArray.getInteger(R.styleable.CustomColumnView_columnRightTextSize, mColumnRightTextSize);
+        mColumnLeftTextSize = typedArray.getDimension(R.styleable.CustomColumnView_columnLeftTextSize, sp2px(context, 16));
+        mColumnRightTextSize = typedArray.getDimension(R.styleable.CustomColumnView_columnRightTextSize, sp2px(context, 16));
         mColumnLeftTextColor = typedArray.getColor(R.styleable.CustomColumnView_columnLeftTextColor, mColumnLeftTextColor);
         mColumnRightTextColor = typedArray.getColor(R.styleable.CustomColumnView_columnRightTextColor, mColumnRightTextColor);
         mColumnLeftIconId = typedArray.getResourceId(R.styleable.CustomColumnView_columnLeftIcon, mColumnLeftIconId);
@@ -79,14 +80,33 @@ public class CustomColumnView extends LinearLayout {
         rightTextView = findViewById(R.id.tv_right_text);
         leftIconImageView = findViewById(R.id.iv_left_icon);
         rightIconImageView = findViewById(R.id.iv_right_icon);
+        View leftLayout = findViewById(R.id.left_layout);
+        View rightLayout = findViewById(R.id.right_layout);
+
+        int iconPadding = dp2px(context, 3);
+
+        int paddingLeft = getPaddingLeft();
+        int paddingTop = getPaddingTop();
+        int paddingRight = getPaddingRight();
+        int paddingBottom = getPaddingBottom();
+
+        leftLayout.setPadding(0, paddingTop - iconPadding, 0, paddingBottom - iconPadding);
+        rightLayout.setPadding(0, paddingTop, 0, paddingBottom);
+//        leftIconImageView.setPadding(0, iconPadding, 0, iconPadding);
+//        rightIconImageView.setPadding(0, paddingTop, 0, paddingBottom);
+        leftTextView.setPadding(0, paddingTop, 0, paddingBottom);
+        setPadding(paddingLeft, 0, paddingRight, 0);
+
 
         setLeftText(mColumnLeftText);
         setLeftTextColor(mColumnLeftTextColor);
+        setLeftTextSize(TypedValue.COMPLEX_UNIT_PX, mColumnLeftTextSize);
         setLeftIcon(mColumnLeftIconId);
         showLeftIcon(mColumnLeftIconShow);
 
         setRightText(mColumnRightText);
         setRightTextColor(mColumnRightTextColor);
+        setRightTextSize(TypedValue.COMPLEX_UNIT_PX, mColumnRightTextSize);
         setRightIcon(mColumnRightIconId);
         showRightIcon(mColumnRightIconShow);
 
@@ -112,21 +132,6 @@ public class CustomColumnView extends LinearLayout {
         }
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        // allocations per draw cycle.
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
-
-        int contentWidth = getWidth() - paddingLeft - paddingRight;
-        int contentHeight = getHeight() - paddingTop - paddingBottom;
-
-    }
-
     public TextView getLeftTextView() {
         return leftTextView;
     }
@@ -139,6 +144,15 @@ public class CustomColumnView extends LinearLayout {
         leftTextView.setTextColor(color);
     }
 
+    public void setLeftTextSize(float size) {
+        setLeftTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    }
+
+    public void setLeftTextSize(int unit, float size) {
+        leftTextView.setTextSize(unit, size);
+    }
+
+
     public TextView getRightTextView() {
         return rightTextView;
     }
@@ -149,6 +163,14 @@ public class CustomColumnView extends LinearLayout {
 
     public void setRightTextColor(@ColorInt int color) {
         rightTextView.setTextColor(color);
+    }
+
+    public void setRightTextSize(float size) {
+        setRightTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    }
+
+    public void setRightTextSize(int unit, float size) {
+        rightTextView.setTextSize(unit, size);
     }
 
     public ImageView getLeftIconImageView() {
@@ -180,17 +202,41 @@ public class CustomColumnView extends LinearLayout {
     }
 
     //data binding setter
-    public void setColumnLeftText(CharSequence text){
+    public void setColumnLeftText(CharSequence text) {
         leftTextView.setText(text);
     }
 
     //data binding setter
-    public void setColumnRightText(CharSequence text){
+    public void setColumnRightText(CharSequence text) {
         rightTextView.setText(text);
     }
 
     //data binding setter
-    public void setColumnRightIconShow(boolean show){
+    public void setColumnRightIconShow(boolean show) {
         rightIconImageView.setVisibility(show ? VISIBLE : GONE);
+    }
+
+    /**
+     * dp to px
+     *
+     * @param context
+     * @param dpValue dp
+     * @return px
+     */
+    static int dp2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    /**
+     * sp to px
+     *
+     * @param context
+     * @param spValue
+     * @return
+     */
+    static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
     }
 }

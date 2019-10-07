@@ -27,7 +27,7 @@ public abstract class LibBaseMvpPresenter<VM, V extends LibBaseMvpView<VM>> {
         viewRef = new WeakReference<>(view);
     }
 
-    public abstract void requestData();
+    public abstract void requestData(Object... objects);
 
     /**
      * 结束的时候清除，防止内存溢出

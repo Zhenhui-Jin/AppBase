@@ -1,2 +1,4 @@
 <resources>
+    <string name="tip_scan_qr_code">Scan QR code of\nback of SIM card</string>
+    <string name="tip_invalid_code">Invalid code</string>
 </resources>

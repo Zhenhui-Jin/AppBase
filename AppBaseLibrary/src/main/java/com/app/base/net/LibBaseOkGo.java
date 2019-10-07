@@ -1,6 +1,7 @@
 package com.app.base.net;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -15,6 +16,7 @@ import com.lzy.okgo.model.HttpHeaders;
 import com.lzy.okgo.model.HttpParams;
 import com.lzy.okgo.request.GetRequest;
 import com.lzy.okgo.request.PostRequest;
+import com.lzy.okgo.request.PutRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,11 +35,13 @@ public abstract class LibBaseOkGo {
     private static final int DEFAULT_READ_TIME_OUT = 60;//默认读写超时 SECONDS
     private static final int RETRY_COUNT = 3;//超时重连次数
 
+    protected Application mApplication;
+
     public LibBaseOkGo(Application application) {
-        init(application);
+        mApplication = application;
     }
 
-    private void init(Application application) {
+    protected void init() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
         int connectTimeOut = getConnectTimeOut();
@@ -78,7 +82,7 @@ public abstract class LibBaseOkGo {
             builder.addInterceptor(loggingInterceptor);                                 //添加OkGo默认debug日志
         }
 
-        OkGo.getInstance().init(application)  //必须调用初始化
+        OkGo.getInstance().init(mApplication)  //必须调用初始化
                 .setOkHttpClient(builder.build()) //建议设置OkHttpClient，不设置会使用默认的
                 .setCacheMode(CacheMode.NO_CACHE)  //全局统一缓存模式，默认不使用缓存，可以不传
                 .setCacheTime(CacheEntity.CACHE_NEVER_EXPIRE) //全局统一缓存时间，默认永不过期，可以不传
@@ -202,11 +206,11 @@ public abstract class LibBaseOkGo {
         headers.put(mapToHeaders(requestInfo.getHeaders()));
         HttpParams params = getHttpParams();
         params.put(requestInfo.getParams(), true);
-        GetRequest<T> getRequest = OkGo.<T>get(requestInfo.getUrl())
+        GetRequest<T> request = OkGo.<T>get(requestInfo.getUrl())
                 .tag(requestInfo.getTag())
                 .headers(headers)
                 .params(params);
-        getRequest.execute(new LibCallback<>(callback));
+        request.execute(new LibCallback<>(callback));
     }
 
     private <T> void post(RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
@@ -214,11 +218,31 @@ public abstract class LibBaseOkGo {
         headers.put(mapToHeaders(requestInfo.getHeaders()));
         HttpParams params = getHttpParams();
         params.put(requestInfo.getParams(), true);
-        PostRequest<T> postRequest = OkGo.<T>post(requestInfo.getUrl())
+        PostRequest<T> request = OkGo.<T>post(requestInfo.getUrl())
                 .tag(requestInfo.getTag())
                 .headers(headers)
                 .params(params);
-        postRequest.execute(new LibCallback<>(callback));
+        String bodyJson = requestInfo.getBodyJson();
+        if (!TextUtils.isEmpty(bodyJson)) {
+            request.upJson(bodyJson);
+        }
+        request.execute(new LibCallback<>(callback));
+    }
+
+    private <T> void put(RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
+        HttpHeaders headers = getHttpHeaders();
+        headers.put(mapToHeaders(requestInfo.getHeaders()));
+        HttpParams params = getHttpParams();
+        params.put(requestInfo.getParams(), true);
+        PutRequest<T> request = OkGo.<T>put(requestInfo.getUrl())
+                .tag(requestInfo.getTag())
+                .headers(headers)
+                .params(params);
+        String bodyJson = requestInfo.getBodyJson();
+        if (!TextUtils.isEmpty(bodyJson)) {
+            request.upJson(bodyJson);
+        }
+        request.execute(new LibCallback<>(callback));
     }
 
     /**
@@ -229,8 +253,11 @@ public abstract class LibBaseOkGo {
      * @param <T>
      */
     final public <T> void execute(@NonNull RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
-        if (requestInfo.getMethod() == RequestMethod.POST) {
+        RequestMethod method = requestInfo.getMethod();
+        if (method == RequestMethod.POST) {
             post(requestInfo, callback);
+        } else if (method == RequestMethod.PUT) {
+            put(requestInfo, callback);
         } else {
             get(requestInfo, callback);
         }

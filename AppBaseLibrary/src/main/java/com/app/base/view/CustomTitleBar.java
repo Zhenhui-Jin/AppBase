@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -25,12 +26,12 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
 
     private String mColumnTitleText;
     private String mColumnTitleTextTypefaceName;
-    private int mColumnTitleTextSize = 14;
+    private float mColumnTitleTextSize = 0;
     private int mColumnTitleTextColor = Color.BLACK;
 
     private String mColumnRightText;
     private String mColumnRightTextTypefaceName;
-    private int mColumnRightTextSize = 14;
+    private float mColumnRightTextSize = 0;
     private int mColumnRightTextColor = Color.BLACK;
 
     private int mColumnLeftIconId;
@@ -70,12 +71,12 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
         final TypedArray typedArray = getContext().obtainStyledAttributes(
                 attrs, R.styleable.CustomTitleBar, defStyle, 0);
         mColumnTitleText = typedArray.getString(R.styleable.CustomTitleBar_columnTitleText);
-        mColumnTitleTextSize = typedArray.getInteger(R.styleable.CustomTitleBar_columnTitleTextSize, mColumnTitleTextSize);
+        mColumnTitleTextSize = typedArray.getDimension(R.styleable.CustomTitleBar_columnTitleTextSize, sp2px(context, 18));
         mColumnTitleTextColor = typedArray.getColor(R.styleable.CustomTitleBar_columnTitleTextColor, mColumnTitleTextColor);
         mColumnTitleTextTypefaceName = typedArray.getString(R.styleable.CustomTitleBar_columnTitleTextTypeface);
 
         mColumnRightText = typedArray.getString(R.styleable.CustomTitleBar_columnTitleRightText);
-        mColumnRightTextSize = typedArray.getInteger(R.styleable.CustomTitleBar_columnTitleRightTextSize, mColumnRightTextSize);
+        mColumnRightTextSize = typedArray.getDimension(R.styleable.CustomTitleBar_columnTitleRightTextSize, sp2px(context, 16));
         mColumnRightTextColor = typedArray.getColor(R.styleable.CustomTitleBar_columnTitleRightTextColor, mColumnRightTextColor);
         mColumnRightTextShow = typedArray.getBoolean(R.styleable.CustomTitleBar_columnTitleRightTextShow, mColumnRightTextShow);
         mColumnRightTextTypefaceName = typedArray.getString(R.styleable.CustomTitleBar_columnTitleRightTextTypeface);
@@ -104,23 +105,27 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
         rightExtendIconImageView.setOnClickListener(this);
         rightTextView.setOnClickListener(this);
 
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
+        int iconPadding = dp2px(context, 5);
 
-        leftIconImageView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        rightIconImageView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        rightExtendIconImageView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        titleTextView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        rightTextView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        setPadding(0, 0, 0, 0);
+        int paddingLeft = getPaddingLeft() - iconPadding;
+        int paddingTop = getPaddingTop() - iconPadding;
+        int paddingRight = getPaddingRight() - iconPadding;
+        int paddingBottom = getPaddingBottom() - iconPadding;
+
+        leftIconImageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        rightIconImageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        rightExtendIconImageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        titleTextView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        rightTextView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
+        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
 
         setTitleText(mColumnTitleText);
         setTitleTextColor(mColumnTitleTextColor);
+        setTitleTextSize(TypedValue.COMPLEX_UNIT_PX, mColumnTitleTextSize);
 
         setTitleRightText(mColumnRightText);
         setTitleRightTextColor(mColumnRightTextColor);
+        setTitleRightTextSize(TypedValue.COMPLEX_UNIT_PX, mColumnRightTextSize);
         showTitleRightText(mColumnRightTextShow);
 
         setLeftIcon(mColumnLeftIconId);
@@ -160,7 +165,9 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
         int left = Math.max(titleTextView.getPaddingLeft(), leftIconImageView.getMeasuredWidth());
         int right = Math.max(titleTextView.getPaddingRight(), llRightLayout.getMeasuredWidth());
         int padding = Math.max(left, right);
-        titleTextView.setPadding(padding, titleTextView.getPaddingTop(), padding, titleTextView.getPaddingBottom());
+        if (titleTextView.getGravity() == Gravity.CENTER) {
+            titleTextView.setPadding(padding, titleTextView.getPaddingTop(), padding, titleTextView.getPaddingBottom());
+        }
     }
 
     public TextView getTitleTextView() {
@@ -175,8 +182,17 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
         titleTextView.setTextColor(color);
     }
 
+    public void setTitleTextSize(float size) {
+        setTitleTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    }
+
+    public void setTitleTextSize(int unit, float size) {
+        titleTextView.setTextSize(unit, size);
+    }
+
     public void setTitleTextGravity(int gravity) {
         titleTextView.setGravity(gravity);
+        invalidate();
     }
 
     public TextView getTitleRightTextView() {
@@ -190,6 +206,14 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
 
     public void setTitleRightTextColor(@ColorInt int color) {
         rightTextView.setTextColor(color);
+    }
+
+    public void setTitleRightTextSize(float size) {
+        setTitleRightTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+    }
+
+    public void setTitleRightTextSize(int unit, float size) {
+        rightTextView.setTextSize(unit, size);
     }
 
     public void showTitleRightText(boolean isShow) {
@@ -286,6 +310,30 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
                 mOnTitleBarClickListener.onClickLeftIcon();
             }
         }
+    }
+
+    /**
+     * dp to px
+     *
+     * @param context
+     * @param dpValue dp
+     * @return px
+     */
+    static int dp2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    /**
+     * sp to px
+     *
+     * @param context
+     * @param spValue
+     * @return
+     */
+    static int sp2px(Context context, float spValue) {
+        final float fontScale = context.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
     }
 
     public interface OnTitleBarClickListener {

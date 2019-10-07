@@ -181,15 +181,8 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
         ImmersionBar bar = ImmersionBar.with(this);
         if (isHaveToolbar()) {
 
-            View baseToolbarHeightView = findViewById(R.id.base_toolbar_height_view);
-            bar.statusBarView(baseToolbarHeightView)
+            bar.statusBarView(R.id.base_toolbar_height_view, mContentView)
                     .statusBarColor(statusBarColor());
-            ViewGroup.LayoutParams layoutParams = baseToolbarHeightView.getLayoutParams();
-            layoutParams.width = getStatusBarHeight();
-
-            if (mToolbarView != null) {
-                bar.titleBar(mToolbarView);
-            }
 
             setToolbarSuspending();
 
@@ -271,6 +264,12 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     protected void postDelayed(Runnable runnable, long delayMillis) {
         if (getHandler() != null) {
             getHandler().postDelayed(runnable, delayMillis);
+        }
+    }
+
+    protected void removeCallbacks(Runnable runnable) {
+        if (getHandler() != null) {
+            getHandler().removeCallbacks(runnable);
         }
     }
 

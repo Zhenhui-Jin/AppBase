@@ -3,6 +3,7 @@ package com.app.base.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,18 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
      * 保存FragmentOnTouchListener接口
      */
     private FragmentOnTouchListener onTouchListener;
+
+    protected Handler mHandler = new Handler();
+
+    public Handler getHandler() {
+        return mHandler;
+    }
+
+    protected void postDelayed(Runnable runnable, long delayMillis) {
+        if (getHandler() != null) {
+            getHandler().postDelayed(runnable, delayMillis);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +155,7 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
         ImmersionBar bar = ImmersionBar.with(this);
         if (isHaveToolbar()) {
             View baseToolbarHeightView = findViewById(R.id.base_toolbar_height_view);
-            bar.statusBarView(baseToolbarHeightView)
+            bar.fitsSystemWindows(true)
                     .statusBarColor(statusBarColor());
             ViewGroup.LayoutParams layoutParams = baseToolbarHeightView.getLayoutParams();
             layoutParams.width = getStatusBarHeight();

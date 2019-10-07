@@ -2,6 +2,8 @@ package com.google.zxing.client.android;
 
 import android.graphics.Bitmap;
 
+import com.google.zxing.Result;
+
 /**
  * @Description 扫描结果回调
  * @Author Zhenhui

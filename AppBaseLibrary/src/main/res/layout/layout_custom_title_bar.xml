@@ -1,9 +1,10 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <TextView
+        android:textStyle="bold"
         android:id="@+id/tv_title_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,13 +16,19 @@
         android:id="@+id/iv_left_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_alignTop="@+id/tv_title_text"
+        android:layout_alignBottom="@+id/tv_title_text"
+        android:layout_alignParentLeft="true"
         android:layout_gravity="center_vertical|left"
         android:gravity="center" />
 
     <LinearLayout
         android:id="@+id/ll_right_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/tv_title_text"
+        android:layout_alignBottom="@+id/tv_title_text"
+        android:layout_alignParentRight="true"
         android:layout_gravity="center_vertical|right"
         android:orientation="horizontal">
 
@@ -46,5 +53,5 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</RelativeLayout>
 

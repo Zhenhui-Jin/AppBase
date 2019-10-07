@@ -1,0 +1,34 @@
+apply plugin: 'com.android.library'
+version = "1.4.10"
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 41
+        versionName version
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
+    implementation 'androidx.fragment:fragment:1.2.0-alpha02'//"com.android.support:support-fragment:28.0.0"
+    implementation 'com.google.android.material:material:1.1.0-alpha09'//'com.android.support:design:28.0.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.11'
+}
+
+
+
+
