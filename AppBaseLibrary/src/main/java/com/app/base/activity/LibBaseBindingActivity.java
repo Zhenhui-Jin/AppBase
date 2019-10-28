@@ -1,7 +1,5 @@
 package com.app.base.activity;
 
-import android.annotation.SuppressLint;
-import android.view.View;
 import android.view.ViewStub;
 
 import androidx.databinding.DataBindingUtil;
@@ -34,5 +32,6 @@ public abstract class LibBaseBindingActivity<DB extends ViewDataBinding> extends
             mToolbarView = toolbarVs.inflate();
         }
         mDataBinding = DataBindingUtil.setContentView(this, getContentLayoutId());
+        mContentView = mDataBinding.getRoot();
     }
 }

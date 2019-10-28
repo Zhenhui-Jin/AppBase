@@ -26,4 +26,8 @@ public class DataCache {
     public static <T> T get(String key, T defaultValue) {
         return Hawk.get(key, defaultValue);
     }
+
+    public static void delete(String key) {
+        Hawk.delete(key);
+    }
 }

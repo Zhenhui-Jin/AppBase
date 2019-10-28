@@ -93,7 +93,7 @@ public class ZXingView extends FrameLayout {
         public void handleDecode(Result rawResult, Bitmap barcode, float scaleFactor) {
             Log.i(TAG, "onScanResult: rawResult=" + rawResult);
             boolean fromLiveScan = barcode != null;
-            if (fromLiveScan) {
+            if (fromLiveScan && mScanResultCallback != null) {
                 // Then not from history, so beep/vibrate and we have an image to draw on
                 mBeepManager.playBeepSoundAndVibrate();
             }

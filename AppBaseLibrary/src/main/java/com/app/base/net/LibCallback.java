@@ -7,6 +7,8 @@ import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
 
+import java.net.SocketTimeoutException;
+
 import okhttp3.ResponseBody;
 
 /**
@@ -48,15 +50,24 @@ class LibCallback<T> extends AbsCallback<T> {
 
     @Override
     public void onError(Response<T> response) {
-        int code = -1;
+        String code = "-1";
         String message = "";
         if (response != null) {
-            code = response.code();
+            code = String.valueOf(response.code());
             Throwable e = response.getException();
             if (e != null) {
+                if (e instanceof SocketTimeoutException) {
+                    code = LibBaseHttpCallback.SOCKET_TIMEOUT_CODE;
+                }
                 message = e.getMessage();
             }
         }
         callback.onFailed(code, message);
     }
+
+    @Override
+    public void onFinish() {
+        callback.onFinish();
+    }
+
 }

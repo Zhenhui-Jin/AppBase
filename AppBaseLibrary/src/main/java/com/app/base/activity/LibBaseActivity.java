@@ -19,6 +19,7 @@ import com.app.base.bus.event.LanguageChangeEvent;
 import com.app.base.fragment.FragmentOnTouchListener;
 import com.app.base.manage.PermissionsManage;
 import com.app.base.utils.LanguageUtils;
+import com.app.base.utils.RxNetTool;
 import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -41,6 +42,7 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
      */
     private RxPermissions rxPermissions;
 
+    protected View mContentView;
     protected View mToolbarView;
 
     /**
@@ -91,7 +93,7 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
         super.setContentView(R.layout.base_root_layout);
         ViewStub viewStub = findViewById(R.id.contentVs);
         viewStub.setLayoutResource(getContentLayoutId());
-        View contentVs = viewStub.inflate();
+        mContentView = viewStub.inflate();
 
         ViewStub toolbarVs = findViewById(R.id.toolbarVs);
         TopBarType topBarType = getTopBarType();
@@ -303,4 +305,18 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
     protected void onLanguageChange() {
     }
 
+    /**
+     * 网络是否可用
+     *
+     * @return
+     */
+    protected boolean isNetworkAvailable() {
+        boolean isAvailable = false;
+        try {
+            isAvailable = RxNetTool.isAvailable(getBaseContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isAvailable;
+    }
 }

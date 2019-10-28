@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
  * @Time 2019/8/15 10:32
  */
 public interface LibBaseHttpCallback<T> {
+    String SOCKET_TIMEOUT_CODE = "timeout";
 
     @NonNull
     TypeToken<T> getTypeToken();
@@ -50,6 +51,7 @@ public interface LibBaseHttpCallback<T> {
      * @param message
      * @return
      */
-    void onFailed(int code, String message);
+    void onFailed(String code, String message);
 
+    void onFinish();
 }

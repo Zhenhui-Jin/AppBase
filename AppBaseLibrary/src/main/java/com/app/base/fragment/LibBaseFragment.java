@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import com.app.base.R;
 import com.app.base.bus.RxBus;
 import com.app.base.bus.event.LanguageChangeEvent;
+import com.app.base.utils.RxNetTool;
 import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -45,7 +46,7 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
     protected Handler mHandler = new Handler();
 
     protected LayoutInflater mLayoutInflater;
-    private View mContentView;
+    protected View mContentView;
     protected View mToolbarView;
 
     @Override
@@ -178,7 +179,7 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
      * 沉浸式状态栏设置
      */
     protected void initImmersionBar() {
-        ImmersionBar bar = ImmersionBar.with(this);
+        ImmersionBar bar = ImmersionBar.with(this).keyboardEnable(immersionBarKeyboardEnable());
         if (isHaveToolbar()) {
 
             bar.statusBarView(R.id.base_toolbar_height_view, mContentView)
@@ -191,6 +192,10 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
             bar.statusBarDarkFont(true, 0.2f);
         }
         bar.init();
+    }
+
+    protected boolean immersionBarKeyboardEnable(){
+        return false;
     }
 
     /**
@@ -326,4 +331,18 @@ public abstract class LibBaseFragment extends SwipeBackFragment {
 
     }
 
+    /**
+     * 网络是否可用
+     *
+     * @return
+     */
+    protected boolean isNetworkAvailable() {
+        boolean isAvailable = false;
+        try {
+            isAvailable = RxNetTool.isAvailable(getContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isAvailable;
+    }
 }

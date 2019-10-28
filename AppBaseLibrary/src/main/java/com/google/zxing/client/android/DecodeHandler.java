@@ -10,7 +10,9 @@ import android.util.Log;
 import com.app.base.R;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
@@ -79,6 +81,18 @@ final class DecodeHandler extends Handler {
                 // continue
             } finally {
                 multiFormatReader.reset();
+            }
+
+            if (rawResult == null) {
+                LuminanceSource invertedSource = source.invert();
+                bitmap = new BinaryBitmap(new HybridBinarizer(invertedSource));
+                try {
+                    rawResult = multiFormatReader.decodeWithState(bitmap);
+                } catch (NotFoundException e) {
+                    // continue
+                } finally {
+                    multiFormatReader.reset();
+                }
             }
         }
 

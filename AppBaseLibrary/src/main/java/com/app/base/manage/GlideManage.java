@@ -2,6 +2,7 @@ package com.app.base.manage;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.TypedValue;
 import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
@@ -13,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 /**
  * @Description Glide管理类
@@ -73,5 +75,12 @@ public class GlideManage {
                 // 设置高斯模糊,模糊程度(最大25)  缩放比例
                 .apply(RequestOptions.bitmapTransform(new BlurTransformation(15)))
                 .into(imageView);
+    }
+
+    public static void loadRoundedBitmap(ImageView iv, int placeHolder, String url,int radius) {
+        Context context = iv.getContext();
+        int r = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, radius, context.getResources().getDisplayMetrics());
+        RequestOptions options = new RequestOptions().fitCenter().transform(new RoundedCornersTransformation(r,0));
+        getBitmap(context,placeHolder,url).apply(options).into(iv);
     }
 }

@@ -26,12 +26,13 @@ public class DialogManage {
     }
 
     public void showLoadingDialog(@NonNull Activity activity, String label) {
-        loadCount++;
         if (loadingDialog == null || !loadingDialog.isShowing()) {
+            loadCount = 0;
             loadingDialog = KProgressHUD.create(activity)
                     .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                     .setLabel(label);
         }
+        loadCount++;
         loadingDialog.show();
     }
 
@@ -44,5 +45,13 @@ public class DialogManage {
             loadingDialog = null;
             loadCount = 0;
         }
+    }
+
+    public void hideAllLoadingDialog() {
+        loadCount = 0;
+        if (loadingDialog != null) {
+            loadingDialog.dismiss();
+        }
+        loadingDialog = null;
     }
 }
