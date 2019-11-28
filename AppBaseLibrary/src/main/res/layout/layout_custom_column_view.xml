@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,7 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="left_text"
+        tools:text="left_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iv_left_icon"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="right_text"
+            tools:text="right_text"
             app:layout_constraintEnd_toStartOf="@+id/iv_right_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

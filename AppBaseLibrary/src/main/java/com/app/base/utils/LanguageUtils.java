@@ -31,12 +31,23 @@ public class LanguageUtils {
     public static LangType getCurrentLangType() {
         LangType langType = null;
         try {
-            langType = DataCache.get(LANG_TYPE_KEY, LangType.ENGLISH);
+            langType = DataCache.get(LANG_TYPE_KEY,null);
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (langType == null) {
-            langType = LangType.ENGLISH;
+
+            String region = Locale.getDefault().getCountry();
+            if (region.equals("CN")) {
+                langType = LangType.SIMPLE_CHINESE;
+            } else if (region.equals("TW") || region.equals("HK")|| region.equals("MO")) {
+                langType = LangType.TRADITION_CHINESE;
+            } else {
+                langType = LangType.ENGLISH;
+            }
+
+            DataCache.put(LANG_TYPE_KEY, langType);
+
         }
         return langType;
     }

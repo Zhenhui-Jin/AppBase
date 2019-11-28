@@ -1,4 +1,5 @@
 <resources>
-    <string name="tip_scan_qr_code">Scan QR code of\nback of SIM card</string>
+    <string name="tip_scan_qr_code"> Scan QR code at the right bottom corner\nof the card for registration</string>
     <string name="tip_invalid_code">Invalid code</string>
+    <string name="left_text">left_text</string>
 </resources>

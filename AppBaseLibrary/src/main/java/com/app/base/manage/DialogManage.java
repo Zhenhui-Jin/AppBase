@@ -1,6 +1,7 @@
 package com.app.base.manage;
 
 import android.app.Activity;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -26,6 +27,7 @@ public class DialogManage {
     }
 
     public void showLoadingDialog(@NonNull Activity activity, String label) {
+        //Log.i("jinhui", "showLoadingDialog: " + Log.getStackTraceString(new Throwable()));
         if (loadingDialog == null || !loadingDialog.isShowing()) {
             loadCount = 0;
             loadingDialog = KProgressHUD.create(activity)
@@ -37,6 +39,7 @@ public class DialogManage {
     }
 
     public void hideLoadingDialog() {
+        //Log.i("jinhui", "hideLoadingDialog: " + Log.getStackTraceString(new Throwable()));
         loadCount--;
         if (loadCount <= 0) {
             if (loadingDialog != null) {
