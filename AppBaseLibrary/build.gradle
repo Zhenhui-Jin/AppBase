@@ -42,7 +42,8 @@ dependencies {
     api 'me.yokeyword:fragmentationx-swipeback:1.0.1'
     //******end******Fragmentation
 
-    implementation 'com.google.zxing:core:3.4.0'
+    implementation 'com.google.zxing:core:3.3.3'
+    implementation 'com.google.zxing:android-core:3.3.0'
     api 'com.google.code.gson:gson:2.8.5'
 
 //    //Bus https://github.com/AndroidKnife/RxBus
