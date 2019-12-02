@@ -27,7 +27,7 @@ public abstract class LibBaseMvpPresenter<VM, V extends LibBaseMvpView<VM>> {
         viewRef = new WeakReference<>(view);
     }
 
-    public abstract void requestData();
+    public abstract void requestData(Object... objects);
 
     /**
      * 结束的时候清除，防止内存溢出
@@ -44,35 +44,35 @@ public abstract class LibBaseMvpPresenter<VM, V extends LibBaseMvpView<VM>> {
      *
      * @return
      */
-    final protected boolean isAdded() {
+    final protected boolean isVisible() {
         V view = getView();
         if (view != null) {
-            return view.isAdded();
+            return view.isVisible();
         }
         return false;
     }
 
-    final protected void showLoading() {
-        if (isAdded()) {
+    public final void showLoading() {
+        if (isVisible()) {
             getView().showLoading();
         }
     }
 
-    final protected void hideLoading() {
-        if (isAdded()) {
+    public final void hideLoading() {
+        if (isVisible()) {
             getView().hideLoading();
         }
     }
 
     final protected void refreshView() {
-        if (isAdded()) {
+        if (isVisible()) {
             getView().refreshView();
         }
     }
 
-    final protected void updateData(VM model) {
-        if (isAdded()) {
-            getView().updateData(model);
+    final protected void updateData(VM data) {
+        if (isVisible()) {
+            getView().updateData(data);
         }
     }
 

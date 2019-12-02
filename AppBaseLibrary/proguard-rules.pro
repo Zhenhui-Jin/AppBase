@@ -20,13 +20,29 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# 保持 Parcelable 不被混淆
+-keep class * implements android.os.Parcelable { *; }
+# 保持 Serializable 不被混淆
+-keep class * implements java.io.Serializable { *; }
+#enum
+-keepclassmembers enum * { *;}
+#webview
+-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+   public *;
+}
+
 #---start 混淆OkGo------------------------------------
 #okhttp
 -dontwarn okhttp3.**
 -keep class okhttp3.**{*;}
+-dontwarn com.squareup.okhttp3.**
+-keep class com.squareup.okhttp3.** { *;}
 
-#okio
+# Okio
+-dontwarn com.squareup.**
 -dontwarn okio.**
+-keep public class org.codehaus.* { *; }
+-keep public class java.nio.* { *; }
 -keep class okio.**{*;}
 #---end 混淆OkGo------------------------------------
 
@@ -34,14 +50,12 @@
 #---start 混淆immersionbar------------------------------------
  -keep class com.gyf.immersionbar.* {*;}
  -dontwarn com.gyf.immersionbar.**
-#---start 混淆immersionbar------------------------------------
-
+#---end 混淆immersionbar------------------------------------
 
 -keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationView { *; }
 -keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationMenuView { *; }
 -keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationPresenter { *; }
 -keep public class * extends com.google.android.material.bottomnavigation.BottomNavigationItemView { *; }
-
 
 #---start 混淆glide------------------------------------
 -keep public class * implements com.bumptech.glide.module.GlideModule
@@ -50,4 +64,17 @@
   **[] $VALUES;
   public *;
 }
-#---start 混淆glide------------------------------------
+#---end 混淆glide------------------------------------
+
+
+#---start 混淆banner------------------------------------
+-keep class com.youth.banner.** {
+    *;
+ }
+#---end 混淆banner------------------------------------
+
+
+#---start 混淆databinding------------------------------------
+-dontwarn android.databinding.**
+-keep class android.databinding.** { *; }
+#---end 混淆databinding------------------------------------

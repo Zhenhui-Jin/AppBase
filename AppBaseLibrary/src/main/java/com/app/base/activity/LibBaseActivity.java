@@ -3,9 +3,12 @@ package com.app.base.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.LayoutRes;
@@ -16,6 +19,7 @@ import com.app.base.bus.event.LanguageChangeEvent;
 import com.app.base.fragment.FragmentOnTouchListener;
 import com.app.base.manage.PermissionsManage;
 import com.app.base.utils.LanguageUtils;
+import com.app.base.utils.RxNetTool;
 import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -38,12 +42,25 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
      */
     private RxPermissions rxPermissions;
 
+    protected View mContentView;
     protected View mToolbarView;
 
     /**
      * 保存FragmentOnTouchListener接口
      */
     private FragmentOnTouchListener onTouchListener;
+
+    protected Handler mHandler = new Handler();
+
+    public Handler getHandler() {
+        return mHandler;
+    }
+
+    protected void postDelayed(Runnable runnable, long delayMillis) {
+        if (getHandler() != null) {
+            getHandler().postDelayed(runnable, delayMillis);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +83,9 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
 
     @Override
     protected void attachBaseContext(Context context) {
-        super.attachBaseContext(LanguageUtils.getAttachBaseContext(context));
+        //获取对应的语言上下文
+        Context attachBaseContext = LanguageUtils.getAttachBaseContext(context);
+        super.attachBaseContext(attachBaseContext);
     }
 
     @SuppressLint("RestrictedApi")
@@ -74,7 +93,7 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
         super.setContentView(R.layout.base_root_layout);
         ViewStub viewStub = findViewById(R.id.contentVs);
         viewStub.setLayoutResource(getContentLayoutId());
-        View contentVs = viewStub.inflate();
+        mContentView = viewStub.inflate();
 
         ViewStub toolbarVs = findViewById(R.id.toolbarVs);
         TopBarType topBarType = getTopBarType();
@@ -137,16 +156,41 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
     protected void initImmersionBar() {
         ImmersionBar bar = ImmersionBar.with(this);
         if (isHaveToolbar()) {
+            View baseToolbarHeightView = findViewById(R.id.base_toolbar_height_view);
             bar.fitsSystemWindows(true)
                     .statusBarColor(statusBarColor());
+            ViewGroup.LayoutParams layoutParams = baseToolbarHeightView.getLayoutParams();
+            layoutParams.width = getStatusBarHeight();
+
             if (mToolbarView != null) {
                 bar.titleBar(mToolbarView);
             }
+
+            setToolbarSuspending();
         }
         if (isStatusBarDarkFont()) {
             bar.statusBarDarkFont(true, 0.2f);
         }
         bar.init();
+    }
+
+    /**
+     * 设置悬浮标题栏
+     */
+    private void setToolbarSuspending() {
+        View baseContentLayout = findViewById(R.id.base_content_layout);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) baseContentLayout.getLayoutParams();
+        params.addRule(RelativeLayout.BELOW, isSuspendingToolbar() ? 0 : R.id.base_toolbar_layout);
+    }
+
+
+    /**
+     * 获取状态栏高度
+     *
+     * @return
+     */
+    protected int getStatusBarHeight() {
+        return ImmersionBar.getStatusBarHeight(this);
     }
 
     /**
@@ -178,6 +222,13 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
     @ColorRes
     protected int statusBarColor() {
         return android.R.color.transparent;
+    }
+
+    /**
+     * 是否悬浮标题栏
+     */
+    protected boolean isSuspendingToolbar() {
+        return false;
     }
 
     protected void sendEvent(Object event) {
@@ -254,4 +305,18 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
     protected void onLanguageChange() {
     }
 
+    /**
+     * 网络是否可用
+     *
+     * @return
+     */
+    protected boolean isNetworkAvailable() {
+        boolean isAvailable = false;
+        try {
+            isAvailable = RxNetTool.isAvailable(getBaseContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return isAvailable;
+    }
 }

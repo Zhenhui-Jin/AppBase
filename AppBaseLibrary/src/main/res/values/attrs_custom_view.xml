@@ -2,8 +2,8 @@
     <declare-styleable name="CustomColumnView">
         <attr name="columnLeftText" format="string" />
         <attr name="columnRightText" format="string" />
-        <attr name="columnLeftTextSize" format="integer" />
-        <attr name="columnRightTextSize" format="integer" />
+        <attr name="columnLeftTextSize" format="dimension" />
+        <attr name="columnRightTextSize" format="dimension" />
         <attr name="columnLeftTextColor" format="color" />
         <attr name="columnRightTextColor" format="color" />
         <attr name="columnLeftTextTypeface" format="string" />
@@ -21,13 +21,13 @@
 
     <declare-styleable name="CustomTitleBar">
         <attr name="columnTitleText" format="string" />
-        <attr name="columnTitleTextSize" format="integer" />
+        <attr name="columnTitleTextSize" format="dimension" />
         <attr name="columnTitleTextColor" format="color" />
         <attr name="columnTitleTextTypeface" format="string" />
 
         <attr name="columnTitleRightText" format="string" />
         <attr name="columnTitleRightTextColor" format="color" />
-        <attr name="columnTitleRightTextSize" format="integer" />
+        <attr name="columnTitleRightTextSize" format="dimension" />
         <attr name="columnTitleRightTextTypeface" format="string" />
         <attr name="columnTitleRightTextShow" format="boolean" />
 

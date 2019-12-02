@@ -11,7 +11,7 @@ public interface LibIView {
      *
      * @return
      */
-    boolean isAdded();
+    boolean isVisible();
 
     /**
      * 显示正在加载view

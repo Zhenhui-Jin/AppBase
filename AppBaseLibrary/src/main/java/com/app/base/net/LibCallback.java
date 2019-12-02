@@ -1,10 +1,13 @@
 package com.app.base.net;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.lzy.okgo.callback.AbsCallback;
 import com.lzy.okgo.model.Response;
 import com.lzy.okgo.request.base.Request;
+
+import java.net.SocketTimeoutException;
 
 import okhttp3.ResponseBody;
 
@@ -15,7 +18,7 @@ class LibCallback<T> extends AbsCallback<T> {
 
     private final LibBaseHttpCallback<T> callback;
 
-    protected LibCallback(LibBaseHttpCallback<T> callback) {
+    protected LibCallback(@NonNull LibBaseHttpCallback<T> callback) {
         this.callback = callback;
     }
 
@@ -26,35 +29,45 @@ class LibCallback<T> extends AbsCallback<T> {
             return null;
         }
         String json = body.string();
-        T t = new Gson().fromJson(json, new TypeToken<T>() {
-        }.getType());
+        T t = new Gson().fromJson(json, callback.getTypeToken().getType());
         return t;
     }
 
     @Override
     public void onStart(Request<T, ? extends Request> request) {
-        if (callback != null) {
-            callback.onStart();
-        }
+        callback.onStart();
     }
 
     @Override
     public void onSuccess(Response<T> response) {
         T t = response.body();
-        if (callback != null) {
-            if (callback.isSuccessful(t)) {
-                callback.onSuccess(t);
-            } else {
-                callback.onFailed(t);
-            }
+        if (callback.isSuccessful(t)) {
+            callback.onSuccess(t);
+        } else {
+            callback.onFailed(t);
         }
     }
 
     @Override
     public void onError(Response<T> response) {
-        Throwable e = response.getException();
-        if (callback != null) {
-            callback.onError(e);
+        String code = "-1";
+        String message = "";
+        if (response != null) {
+            code = String.valueOf(response.code());
+            Throwable e = response.getException();
+            if (e != null) {
+                if (e instanceof SocketTimeoutException) {
+                    code = LibBaseHttpCallback.SOCKET_TIMEOUT_CODE;
+                }
+                message = e.getMessage();
+            }
         }
+        callback.onFailed(code, message);
     }
+
+    @Override
+    public void onFinish() {
+        callback.onFinish();
+    }
+
 }
