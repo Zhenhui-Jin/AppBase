@@ -3,8 +3,6 @@ package com.app.base.net;
 import android.app.Application;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
@@ -18,11 +16,13 @@ import com.lzy.okgo.request.GetRequest;
 import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.PutRequest;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import androidx.annotation.NonNull;
 import okhttp3.OkHttpClient;
 
 /**
@@ -41,7 +41,7 @@ public abstract class LibBaseOkGo {
         mApplication = application;
     }
 
-    protected void init() {
+    protected void init(InputStream... certificates) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
 
         int connectTimeOut = getConnectTimeOut();
@@ -63,14 +63,14 @@ public abstract class LibBaseOkGo {
 
 //        //https相关设置，以下几种方案根据需要自己设置
 //        //方法一：信任所有证书,不安全有风险
-        HttpsUtils.SSLParams sslParams1 = HttpsUtils.getSslSocketFactory();
+//        HttpsUtils.SSLParams sslParams1 = HttpsUtils.getSslSocketFactory();
 //        //方法二：自定义信任规则，校验服务端证书
-//        HttpsUtils.SSLParams sslParams2 = HttpsUtils.getSslSocketFactory(new SafeTrustManager());
+        HttpsUtils.SSLParams sslParams = certificates == null ? HttpsUtils.getSslSocketFactory() : HttpsUtils.getSslSocketFactory(certificates);
 //        //方法三：使用预埋证书，校验服务端证书（自签名证书）
 //        //HttpsUtils.SSLParams sslParams3 = HttpsUtils.getSslSocketFactory(getAssets().open("srca.cer"));
 //        //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
 //        //HttpsUtils.SSLParams sslParams4 = HttpsUtils.getSslSocketFactory(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"));
-        builder.sslSocketFactory(sslParams1.sSLSocketFactory, sslParams1.trustManager);
+        builder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
 //        //配置https的域名匹配规则，详细看demo的初始化介绍，不需要就不要加入，使用不当会导致https握手失败
 //        builder.hostnameVerifier(new SafeHostnameVerifier());
 

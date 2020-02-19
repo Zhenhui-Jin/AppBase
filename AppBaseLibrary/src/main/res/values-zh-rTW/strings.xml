@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tip_scan_qr_code">掃瞄卡右下角的QR code</string>
+    <string name="tip_invalid_code">"無效QR code"</string>
+</resources>

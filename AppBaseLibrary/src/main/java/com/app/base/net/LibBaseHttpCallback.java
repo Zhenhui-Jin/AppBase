@@ -1,8 +1,8 @@
 package com.app.base.net;
 
-import androidx.annotation.NonNull;
-
 import com.google.gson.reflect.TypeToken;
+
+import androidx.annotation.NonNull;
 
 /**
  * @Description
@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
  */
 public interface LibBaseHttpCallback<T> {
     String SOCKET_TIMEOUT_CODE = "timeout";
+    String NETWORK_CONNECTION_ERROR_CODE = "NetworkConnectionError";
 
     @NonNull
     TypeToken<T> getTypeToken();

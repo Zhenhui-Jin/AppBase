@@ -1,11 +1,10 @@
 package com.app.base.manage;
 
 import android.app.Activity;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 
 import com.kaopiz.kprogresshud.KProgressHUD;
+
+import androidx.annotation.NonNull;
 
 /**
  * @Description
@@ -32,6 +31,7 @@ public class DialogManage {
             loadCount = 0;
             loadingDialog = KProgressHUD.create(activity)
                     .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                    .setCancellable(false)
                     .setLabel(label);
         }
         loadCount++;
