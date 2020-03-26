@@ -10,4 +10,9 @@ public class DemoApplication extends LibBaseApplication {
     protected void init() {
         DemoApplication application = DemoApplication.getApplication();
     }
+
+    @Override
+    protected boolean isShowStackView() {
+        return true;
+    }
 }

@@ -7,6 +7,7 @@ import com.app.base.utils.DataCache;
 
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
+
 import me.yokeyword.fragmentation.Fragmentation;
 import me.yokeyword.fragmentation.helper.ExceptionHandler;
 
@@ -16,7 +17,7 @@ public abstract class LibBaseApplication extends MultiDexApplication implements 
     private boolean isRunInBackground = true;
     private ActivityLifecycleCallbacks mActivityLifecycleCallbacks;
 
-    protected static LibBaseApplication mApplication;
+    private static LibBaseApplication mApplication;
 
     public static <A extends LibBaseApplication> A getApplication() {
         if (mApplication == null) {
@@ -33,7 +34,7 @@ public abstract class LibBaseApplication extends MultiDexApplication implements 
 
         Fragmentation.builder()
                 // 设置 栈视图 模式为 （默认）悬浮球模式   SHAKE: 摇一摇唤出  NONE：隐藏， 仅在Debug环境生效
-                .stackViewMode(Fragmentation.NONE)
+                .stackViewMode(isShowStackView() ? Fragmentation.BUBBLE : Fragmentation.NONE)
                 .debug(BuildConfig.DEBUG)
                 /**
                  * 可以获取到{@link me.yokeyword.fragmentation.exception.AfterSaveStateTransactionWarning}
@@ -54,6 +55,10 @@ public abstract class LibBaseApplication extends MultiDexApplication implements 
         initBackgroundCallBack();
 
         init();
+    }
+
+    protected boolean isShowStackView() {
+        return false;
     }
 
 
