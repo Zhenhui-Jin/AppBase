@@ -2,10 +2,10 @@ package com.app.base.fragment;
 
 import android.content.Context;
 
-import androidx.databinding.ViewDataBinding;
-
 import com.app.base.mvp.LibBaseMvpPresenter;
 import com.app.base.mvp.LibBaseMvpView;
+
+import androidx.databinding.ViewDataBinding;
 
 /**
  * @param <VM> ViewModel

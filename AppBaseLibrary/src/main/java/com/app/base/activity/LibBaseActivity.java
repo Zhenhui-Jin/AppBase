@@ -10,9 +10,6 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.LayoutRes;
-
 import com.app.base.R;
 import com.app.base.bus.RxBus;
 import com.app.base.bus.event.LanguageChangeEvent;
@@ -24,6 +21,10 @@ import com.app.base.view.TopBarType;
 import com.gyf.immersionbar.ImmersionBar;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.LayoutRes;
+import me.yokeyword.fragmentation.anim.DefaultNoAnimator;
+import me.yokeyword.fragmentation.anim.FragmentAnimator;
 import me.yokeyword.fragmentation_swipeback.SwipeBackActivity;
 
 import static com.app.base.view.TopBarType.None;
@@ -101,6 +102,11 @@ public abstract class LibBaseActivity extends SwipeBackActivity {
             toolbarVs.setLayoutResource(getTitleLayoutId());
             mToolbarView = toolbarVs.inflate();
         }
+    }
+
+    @Override
+    public FragmentAnimator onCreateFragmentAnimator() {
+        return new DefaultNoAnimator();
     }
 
     /**

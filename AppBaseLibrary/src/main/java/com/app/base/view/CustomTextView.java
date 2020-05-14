@@ -5,9 +5,9 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
-import androidx.appcompat.widget.AppCompatTextView;
-
 import com.app.base.R;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * 自定义TextView

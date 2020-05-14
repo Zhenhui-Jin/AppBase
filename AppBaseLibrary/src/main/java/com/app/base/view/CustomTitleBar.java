@@ -13,11 +13,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.app.base.R;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-
-import com.app.base.R;
 
 /**
  * 自定义Title控件
@@ -107,17 +107,17 @@ public class CustomTitleBar extends LinearLayout implements View.OnClickListener
 
         int iconPadding = dp2px(context, 5);
 
-        int paddingLeft = getPaddingLeft() - iconPadding;
+        int paddingLeft = getPaddingLeft() /*- iconPadding*/;
         int paddingTop = getPaddingTop() - iconPadding;
-        int paddingRight = getPaddingRight() - iconPadding;
+        int paddingRight = getPaddingRight() /*- iconPadding*/;
         int paddingBottom = getPaddingBottom() - iconPadding;
 
-        leftIconImageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
-        rightIconImageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
-        rightExtendIconImageView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
-        titleTextView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
-        rightTextView.setPadding(iconPadding, iconPadding, iconPadding, iconPadding);
-        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        leftIconImageView.setPadding(0, iconPadding, 0, iconPadding);
+        rightIconImageView.setPadding(0, iconPadding, 0, iconPadding);
+        rightExtendIconImageView.setPadding(0, iconPadding, 0, iconPadding);
+        titleTextView.setPadding(0, iconPadding, 0, iconPadding);
+        rightTextView.setPadding(0, iconPadding, 0, iconPadding);
+        setPadding(0, paddingTop, 0, paddingBottom);
 
         setTitleText(mColumnTitleText);
         setTitleTextColor(mColumnTitleTextColor);

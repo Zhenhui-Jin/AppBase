@@ -16,8 +16,10 @@ import com.lzy.okgo.request.GetRequest;
 import com.lzy.okgo.request.PostRequest;
 import com.lzy.okgo.request.PutRequest;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -30,7 +32,7 @@ import okhttp3.OkHttpClient;
  * @Author Zhenhui
  * @Time 2019/8/15 23:01
  */
-public abstract class LibBaseOkGo {
+public abstract class LibBaseOkGo implements OnEncryptCallback {
     private static final int DEFAULT_TIME_OUT = 60;//默认超时时间  SECONDS
     private static final int DEFAULT_READ_TIME_OUT = 60;//默认读写超时 SECONDS
     private static final int RETRY_COUNT = 3;//超时重连次数
@@ -39,6 +41,10 @@ public abstract class LibBaseOkGo {
 
     public LibBaseOkGo(Application application) {
         mApplication = application;
+    }
+
+    public Application getApplication() {
+        return mApplication;
     }
 
     protected void init(InputStream... certificates) {
@@ -97,7 +103,7 @@ public abstract class LibBaseOkGo {
      * @return
      */
     private HttpParams getHttpParams() {
-        Map<String, String> defaultParams = getDefaultParams();
+        Map<String, Object> defaultParams = getDefaultParams();
         HttpParams params = mapToParams(defaultParams);
         return params;
     }
@@ -108,11 +114,17 @@ public abstract class LibBaseOkGo {
      * @param map
      * @return
      */
-    private HttpParams mapToParams(Map<String, String> map) {
+    private HttpParams mapToParams(Map<String, Object> map) {
         HttpParams params = new HttpParams();
         if (map != null) {
-            for (Map.Entry<String, String> entry : map.entrySet()) {
-                params.put(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                Object value = entry.getValue();
+                String key = entry.getKey();
+                if (value instanceof File) {
+                    params.put(key, (File) value);
+                } else {
+                    params.put(key, (String) value);
+                }
             }
         }
         return params;
@@ -151,7 +163,7 @@ public abstract class LibBaseOkGo {
      * @return
      */
     @NonNull
-    protected Map<String, String> getDefaultParams() {
+    protected Map<String, Object> getDefaultParams() {
         return new HashMap<>();
     }
 
@@ -201,23 +213,31 @@ public abstract class LibBaseOkGo {
         return true;
     }
 
-    private <T> void get(RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
+    private <T> LibCallback<T> getCallback(@NonNull LibBaseHttpCallback<T> callback) {
+        return new LibCallback<T>(callback, this);
+    }
+
+    private <T> void get(RequestInfo requestInfo, @NonNull LibBaseHttpCallback<T> callback) {
         HttpHeaders headers = getHttpHeaders();
         headers.put(mapToHeaders(requestInfo.getHeaders()));
         HttpParams params = getHttpParams();
-        params.put(requestInfo.getParams(), true);
+        params.put(mapToParams(requestInfo.getParams()));
         GetRequest<T> request = OkGo.<T>get(requestInfo.getUrl())
                 .tag(requestInfo.getTag())
                 .headers(headers)
                 .params(params);
-        request.execute(new LibCallback<>(callback));
+        request.execute(getCallback(callback));
     }
 
-    private <T> void post(RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
+    private <T> void post(RequestInfo requestInfo, @NonNull LibBaseHttpCallback<T> callback) {
         HttpHeaders headers = getHttpHeaders();
         headers.put(mapToHeaders(requestInfo.getHeaders()));
         HttpParams params = getHttpParams();
-        params.put(requestInfo.getParams(), true);
+        params.put(mapToParams(requestInfo.getParams()));
+        Map<String, List<File>> fileParams = requestInfo.getFileParams();
+        for (Map.Entry<String, List<File>> entry : fileParams.entrySet()) {
+            params.putFileParams(entry.getKey(), entry.getValue());
+        }
         PostRequest<T> request = OkGo.<T>post(requestInfo.getUrl())
                 .tag(requestInfo.getTag())
                 .headers(headers)
@@ -226,14 +246,14 @@ public abstract class LibBaseOkGo {
         if (!TextUtils.isEmpty(bodyJson)) {
             request.upJson(bodyJson);
         }
-        request.execute(new LibCallback<>(callback));
+        request.execute(getCallback(callback));
     }
 
-    private <T> void put(RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
+    private <T> void put(RequestInfo requestInfo, @NonNull LibBaseHttpCallback<T> callback) {
         HttpHeaders headers = getHttpHeaders();
         headers.put(mapToHeaders(requestInfo.getHeaders()));
         HttpParams params = getHttpParams();
-        params.put(requestInfo.getParams(), true);
+        params.put(mapToParams(requestInfo.getParams()));
         PutRequest<T> request = OkGo.<T>put(requestInfo.getUrl())
                 .tag(requestInfo.getTag())
                 .headers(headers)
@@ -242,7 +262,7 @@ public abstract class LibBaseOkGo {
         if (!TextUtils.isEmpty(bodyJson)) {
             request.upJson(bodyJson);
         }
-        request.execute(new LibCallback<>(callback));
+        request.execute(getCallback(callback));
     }
 
     /**
@@ -252,7 +272,10 @@ public abstract class LibBaseOkGo {
      * @param callback
      * @param <T>
      */
-    final public <T> void execute(@NonNull RequestInfo requestInfo, LibBaseHttpCallback<T> callback) {
+    final public <T> void execute(@NonNull RequestInfo requestInfo, LibBaseHttpCallback callback) {
+        if (callback == null) {
+            callback = new DefaultApiCallback<T>();
+        }
         RequestMethod method = requestInfo.getMethod();
         if (method == RequestMethod.POST) {
             post(requestInfo, callback);
@@ -270,5 +293,17 @@ public abstract class LibBaseOkGo {
      */
     public void cancelTag(Object tag) {
         OkGo.getInstance().cancelTag(tag);
+    }
+
+    /**
+     * 对接口返回的数据进行解密
+     *
+     * @param url
+     * @param body
+     * @return
+     */
+    @Override
+    public String decodeBody(String url, String body) {
+        return body;
     }
 }

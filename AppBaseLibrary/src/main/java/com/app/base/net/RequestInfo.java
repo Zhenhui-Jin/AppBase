@@ -1,7 +1,12 @@
 package com.app.base.net;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
 
 /**
  * @Description 请求参数信息
@@ -14,7 +19,8 @@ public class RequestInfo {
     private String url;
     private RequestMethod method;
     private Map<String, String> headers = new HashMap();  //添加的header
-    private Map<String, String> params = new HashMap<>();     //添加的param
+    private Map<String, Object> params = new HashMap<>();     //添加的param
+    private Map<String, List<File>> fileParams = new HashMap<>();     //添加的param
     private String bodyJson;
 
     private RequestInfo(Object tag, RequestMethod method, String url) {
@@ -72,13 +78,16 @@ public class RequestInfo {
         return headers;
     }
 
-    public Map<String, String> getParams() {
+    public Map<String, Object> getParams() {
         return params;
     }
 
-    public RequestInfo setParams(Map<String, String> params) {
-        this.params = params;
-        return this;
+    @NonNull
+    public Map<String, List<File>> getFileParams() {
+        if (fileParams == null) {
+            return new HashMap<>();
+        }
+        return fileParams;
     }
 
     public RequestInfo setHeaders(Map<String, String> headers) {
@@ -88,6 +97,20 @@ public class RequestInfo {
 
     public RequestInfo addParams(String key, String value) {
         params.put(key, value);
+        return this;
+    }
+
+    public RequestInfo addParams(String key, Object value) {
+        params.put(key, value);
+        return this;
+    }
+
+    public RequestInfo addFileParams(String key, List<File> value) {
+        List<File> files = new ArrayList<>();
+        if (value != null) {
+            files.addAll(value);
+        }
+        fileParams.put(key, files);
         return this;
     }
 

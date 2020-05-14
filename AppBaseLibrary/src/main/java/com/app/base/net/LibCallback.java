@@ -19,9 +19,11 @@ import okhttp3.ResponseBody;
 class LibCallback<T> extends AbsCallback<T> {
 
     private final LibBaseHttpCallback<T> callback;
+    private final OnEncryptCallback mOnEncryptCallback;
 
-    protected LibCallback(@NonNull LibBaseHttpCallback<T> callback) {
+    protected LibCallback(@NonNull LibBaseHttpCallback<T> callback, OnEncryptCallback onEncryptCallback) {
         this.callback = callback;
+        mOnEncryptCallback = onEncryptCallback;
     }
 
     @Override
@@ -31,6 +33,10 @@ class LibCallback<T> extends AbsCallback<T> {
             return null;
         }
         String json = body.string();
+        if (mOnEncryptCallback != null) {
+            String url = response.request().url().toString();
+            json = mOnEncryptCallback.decodeBody(url, json);
+        }
         T t = new Gson().fromJson(json, callback.getTypeToken().getType());
         return t;
     }

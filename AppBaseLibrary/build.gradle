@@ -90,7 +90,7 @@ dependencies {
 
 
     //https://github.com/tamsiree/RxTool/wiki/RxTool-Wiki
-//    api "com.github.tamsiree.RxTool:RxKit:2.3.9"
+    api "com.github.tamsiree.RxTool:RxKit:2.3.9"
     //https://github.com/hugeterry/CoordinatorTabLayout
 }
 
